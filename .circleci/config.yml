@@ -86,18 +86,19 @@ jobs:
       - run:
           name: Deploy to AWS Cloudfront
           command: |
-            aws configure set preview.cloudfront
+            aws configure set preview.cloudfront true
             if [ "${CIRCLE_BRANCH}" == "master" ]
             then
               aws cloudfront create-invalidation --distribution-id ${PRODUCTION_DUSTRIBUTION_ID} --paths /\*
             elif [ "${CIRCLE_BRANCH}" == "staging" ]
             then
-              aws cloudfront create-invalidation --distribution-id ${STAGING_DISTRIBUTION_ID}
-            else
-              aws cloudfront create-invalidation --distribution-id ${DEVELOPMENT_DISTRIBUTION_ID}
+              aws cloudfront create-invalidation --distribution-id ${STAGING_DISTRIBUTION_ID} --paths /\*
+            else 
+              aws cloudfront create-invalidation --distribution-id ${DEVELOPMENT_DISTRIBUTION_ID} --paths /\*
             fi
 
 workflows:
+  version: 2
   build_and_deploy:
     jobs:
       - build
