@@ -12,15 +12,18 @@ jobs:
           command: echo ${CIRCLE_BRANCH}
       - restore_cache:
           keys:
-            - app-{{ checksum "package.json" }}
+            - app-{{ checksum 'package.json' }}
             - app-
       - run:
-          name: Install dependencies
-          command: yarn install --immutable
+          name: Install yarn globally
+          command: npm install -g yarn
+      - run:
+          name: Install node dependencies
+          command: yarn install
       - save_cache:
           paths:
             - node_modules
-          key: app-{{ checksum "package.json" }}
+          key: app-{{ checksum 'package.json' }}
 
   deploy-to-aws-s3:
     docker:
@@ -36,16 +39,16 @@ jobs:
           working_directory: /
           command: |
             sudo apt-get -y -qq update
-            sudo apt-get -y awscli
-            sudo apt-get install -y python-pip python-dev build-essential
+            sudo apt-get install -y awscli
+            sudo apt-get install -y python-pipe python-dev build-essential
       - run:
           name: Build project
           command: |
             yarn install
-            yarn build
+            yarn build 
             cd build
-            zip ../build -r * .[^.]*
-            echo Build successful
+            zip ../build.zip * .[^.]*
+            echo "Build successful"
       - run:
           name: Deploy to AWS S3
           command: |
@@ -73,32 +76,31 @@ jobs:
           working_directory: /
           command: |
             sudo apt-get -y -qq update
-            sudo apt-get -y awscli
-            sudo apt-get install -y python-pip python-dev build-essential
+            sudo apt-get install -y awscli
+            sudo apt-get install -y python-pipe python-dev build-essential
       - run:
           name: Build project
           command: |
             yarn install
-            yarn build
+            yarn build 
             cd build
-            zip ../build -r * .[^.]*
-            echo Build successful
+            zip ../build.zip * .[^.]*
+            echo "Build successful"
       - run:
-          name: Deploy to AWS Cloudfront
+          name: Deploy to AWS CoudFront
           command: |
-            aws configure set preview.cloudfront true
+            aws configure set preview.cloudfront
             if [ "${CIRCLE_BRANCH}" == "master" ]
             then
               aws cloudfront create-invalidation --distribution-id ${PRODUCTION_DUSTRIBUTION_ID} --paths /\*
             elif [ "${CIRCLE_BRANCH}" == "staging" ]
             then
               aws cloudfront create-invalidation --distribution-id ${STAGING_DISTRIBUTION_ID} --paths /\*
-            else 
+            else
               aws cloudfront create-invalidation --distribution-id ${DEVELOPMENT_DISTRIBUTION_ID} --paths /\*
             fi
 
 workflows:
-  version: 2
   build_and_deploy:
     jobs:
       - build
@@ -108,15 +110,15 @@ workflows:
           filters:
             branches:
               only:
-                - develop
-                - staging
+                - development
                 - master
+                - staging
       - deploy-to-aws-cloudfront:
           requires:
             - deploy-to-aws-s3
           filters:
             branches:
               only:
-                - develop
-                - staging
+                - development
                 - master
+                - staging
