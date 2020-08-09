@@ -37,7 +37,7 @@ jobs:
           command: |
             sudo apt-get -y -qq update
             sudo apt-get -y -qq install
-            sudo apt-get install -y python-pipe python-dev build-essential
+            sudo apt-get install -y -qq python-pipe python-dev build-essential
       - run:
           name: Build project
           command: |
