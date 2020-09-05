@@ -19,6 +19,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "lint": "eslint './src/**/*.{ts,tsx}'",
+    "prettier:check": "prettier --check './src/**/*.{ts,tsx,json}'",
+    "prettier:write": "prettier --write './src/**/*.{ts,tsx,json}'",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -39,11 +41,13 @@
     "@typescript-eslint/parser": "2.x",
     "babel-eslint": "10.x",
     "eslint": "6.x",
+    "eslint-config-prettier": "^6.11.0",
     "eslint-config-react-app": "^5.2.1",
     "eslint-plugin-flowtype": "4.x",
     "eslint-plugin-import": "2.x",
     "eslint-plugin-jsx-a11y": "6.x",
     "eslint-plugin-react": "7.x",
-    "eslint-plugin-react-hooks": "2.x"
+    "eslint-plugin-react-hooks": "2.x",
+    "prettier": "2.1.1"
   }
 }
